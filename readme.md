@@ -18,8 +18,27 @@ var cursor = require('levelup-cursor');
 
 ```js
 db.readStream().pipe(cursor.each(function (data) {
-  assert(data.value)
-  assert(data.key)
+  assert(data)
+  var key = Object.keys(data).pop()
+  var value = data[key]
+  assert(value)
+  assert(key)
+}, function (e) {
+  assert.equal(e,  null)
+}))
+```
+
+```js
+db.keyStream().pipe(cursor.each(function (data) {
+  assert(data)
+}, function (e) {
+  assert.equal(e,  null)
+}))
+```
+
+```js
+db.valueStream().pipe(cursor.each(function (data) {
+  assert(data)
 }, function (e) {
   assert.equal(e,  null)
 }))
@@ -30,7 +49,25 @@ db.readStream().pipe(cursor.each(function (data) {
 ```js
 db.readStream().pipe(cursor.all(function (e, data) {
   assert.equal(e,  null)
+  var keys = Object.keys(data)
   assert(data instanceof Array)
+  assert(keys.length)
+}))
+```
+
+```js
+db.keyStream().pipe(cursor.all(function (e, data) {
+  assert.equal(e,  null)
+  assert(data instanceof Array)
+  assert(data.length)
+}))
+```
+
+```js
+db.valuesStream().pipe(cursor.all(function (e, data) {
+  assert.equal(e,  null)
+  assert(data instanceof Array)
+  assert(data.length)
 }))
 ```
 
@@ -38,8 +75,11 @@ db.readStream().pipe(cursor.all(function (e, data) {
 
 ```js
 db.readStream().pipe(cursor.each(function (data) {
-  assert(data.value)
-  assert(data.key)
+  assert(data)
+  var key = Object.keys(data).pop()
+  var value = data[key]
+  assert(value)
+  assert(key)
 }, function (e) {
   assert.equal(e,  null)
 })).pipe(db1.writeStream())
@@ -48,7 +88,9 @@ db.readStream().pipe(cursor.each(function (data) {
 ```js
 db.readStream().pipe(cursor.all(function (e, data) {
   assert.equal(e,  null)
+  var keys = Object.keys(data)
   assert(data instanceof Array)
+  assert(keys.length)
 })).pipe(db1.writeStream())
 ```
 

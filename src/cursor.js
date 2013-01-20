@@ -1,4 +1,5 @@
-var stream = require('stream')
+var type = require('type-component'),
+    stream = require('stream')
 
 var cursor = function (callback) {
   this.stream = new stream()
@@ -8,8 +9,6 @@ var cursor = function (callback) {
   
   this.closed = false
   this.ended = false
-  
-  this.data = []
   
   this.stream.resume = this.emit('pause')
   this.stream.pause = this.emit('pause')
@@ -60,6 +59,16 @@ cursor.prototype.destroy = function () {
   this.close()
 }
 
+cursor.prototype.isReadStream = function (data) {
+  return type(data) == 'object' && data.key && data.value
+}
+
+cursor.prototype.flat = function (data) {
+  var returns = {}
+  returns[data.key] = data.value
+  return returns
+}
+
 /******************************************************************************/
 
 exports.each = function (each, end) {
@@ -67,7 +76,9 @@ exports.each = function (each, end) {
     
   base.stream.write = function (data) {
     base.stream.emit('data', data)
-    each(data)
+    
+    if(!base.isReadStream(data)) return each(data)
+    each(base.flat(data))
   }
   
   return base.stream
@@ -75,10 +86,19 @@ exports.each = function (each, end) {
 
 exports.all = function (callback) {
   var base = new cursor(callback)
+  var isReadStream
 
   base.stream.write = function (data) {
     base.stream.emit('data', data)
-    base.data.push(data)
+    if(type(isReadStream) == 'undefined') isReadStream = base.isReadStream(data)
+    
+    if(isReadStream) {
+      if(!base.data) base.data = {}
+      base.data[data.key] = data.value
+    } else {
+      if(!base.data) base.data = []
+      base.data.push(data)
+    }
   }
   
   return base.stream
