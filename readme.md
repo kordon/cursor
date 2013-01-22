@@ -5,7 +5,7 @@
 ## install
 
 ```bash
-npm install [--save/--save-dev] cursor
+npm install [--save/--save-dev] levelup-cursor
 ```
 
 ## api
@@ -16,82 +16,205 @@ var cursor = require('levelup-cursor');
 
 ### each
 
+#### readStream
+
 ```js
-db.readStream().pipe(cursor.each(function (data) {
-  assert(data)
-  var key = Object.keys(data).pop()
-  var value = data[key]
-  assert(value)
-  assert(key)
-}, function (e) {
-  assert.equal(e,  null)
+var stream = db.readStream()
+
+stream.on('error', function (e) {
+  throw e
+})
+
+stream.pipe(cursor.each(function (key, value, data) {
+  assert.notEqual(value, undefined)
+  assert.notEqual(key, undefined)
+  assert.notEqual(value, null)
+  assert.notEqual(key, null)
+  
+  assert.equal(value, data[key])  
+}, function () {
+  // end
 }))
 ```
 
 ```js
-db.keyStream().pipe(cursor.each(function (data) {
-  assert(data)
+var stream = db.readStream()
+
+cursor(stream).each(function (key, value, data) {
+  assert.notEqual(value, undefined)
+  assert.notEqual(key, undefined)
+  assert.notEqual(value, null)
+  assert.notEqual(key, null)
+  
+  assert.equal(value, data[key]) 
 }, function (e) {
-  assert.equal(e,  null)
+  assert.equal(e, null || undefined)
+  // end
+})
+```
+
+#### valueStream
+
+```js
+var stream = db.valueStream()
+
+stream.on('error', function (e) {
+  throw e
+})
+
+stream.pipe(cursor.each(function (value) {
+  assert.notEqual(value, undefined)
+  assert.notEqual(value, null)
+}, function () {
+  // end
 }))
 ```
 
 ```js
-db.valueStream().pipe(cursor.each(function (data) {
-  assert(data)
+var stream = db.valueStream()
+
+cursor(stream).each(function (value) {
+  assert.notEqual(value, undefined)
+  assert.notEqual(value, null)
 }, function (e) {
-  assert.equal(e,  null)
+  assert.equal(e, null || undefined)
+  // end
+})
+```
+
+#### keyStream
+
+```js
+var stream = db.keyStream()
+
+stream.on('error', function (e) {
+  throw e
+})
+
+stream.pipe(cursor.each(function (key) {
+  assert.notEqual(key, undefined)
+  assert.notEqual(key, null)
+}, function () {
+  // end
 }))
+```
+
+```js
+var stream = db.keyStream()
+
+cursor(stream).each(function (key) {
+  assert.notEqual(key, undefined)
+  assert.notEqual(key, null)
+}, function (e) {
+  assert.equal(e, null || undefined)
+  // end
+})
 ```
 
 ### all
 
+#### readStream
+
 ```js
-db.readStream().pipe(cursor.all(function (e, data) {
-  assert.equal(e,  null)
-  var keys = Object.keys(data)
-  assert(data instanceof Array)
-  assert(keys.length)
+var stream = db.readStream()
+
+stream.on('error', function (e) {
+  throw e
+})
+
+stream.pipe(cursor.all(function (keys, values, data) {
+  assert.notEqual(values, undefined)
+  assert.notEqual(keys, undefined)
+  assert.notEqual(values, null)
+  assert.notEqual(keys, null)
+  
+  assert.equal(Object.keys(data).length, keys.length)
 }))
 ```
 
 ```js
-db.keyStream().pipe(cursor.all(function (e, data) {
-  assert.equal(e,  null)
-  assert(data instanceof Array)
-  assert(data.length)
+var stream = db.readStream()
+
+cursor(stream).all(function (e, keys, values, data) {
+  assert.equal(e, null || undefined)
+
+  assert.notEqual(values, undefined)
+  assert.notEqual(keys, undefined)
+  assert.notEqual(values, null)
+  assert.notEqual(keys, null)
+  
+  assert.equal(Object.keys(data).length, keys.length)
+})
+```
+
+#### valueStream
+
+```js
+var stream = db.valueStream()
+
+stream.on('error', function (e) {
+  throw e
+})
+
+stream.pipe(cursor.all(function (values) {
+  assert.notEqual(values, undefined)
+  assert.notEqual(values, null)
 }))
 ```
 
 ```js
-db.valuesStream().pipe(cursor.all(function (e, data) {
-  assert.equal(e,  null)
-  assert(data instanceof Array)
-  assert(data.length)
+var stream = db.valueStream()
+
+cursor(stream).all(function (e, values) {
+  assert.equal(e, null || undefined)
+
+  assert.notEqual(values, undefined)
+  assert.notEqual(values, null)
+})
+```
+
+#### keyStream
+
+```js
+var stream = db.keyStream()
+
+stream.on('error', function (e) {
+  throw e
+})
+
+stream.pipe(cursor.all(function (keys) {
+  assert.notEqual(keys, undefined)
+  assert.notEqual(keys, null)
 }))
 ```
 
-### pipe
+```js
+var stream = db.keyStream()
+
+cursor(stream).all(function (e, keys) {
+  assert.equal(e, null || undefined)
+
+  assert.notEqual(keys, undefined)
+  assert.notEqual(keys, null)
+})
+```
+
+### piping
 
 ```js
-db.readStream().pipe(cursor.each(function (data) {
-  assert(data)
-  var key = Object.keys(data).pop()
-  var value = data[key]
-  assert(value)
-  assert(key)
-}, function (e) {
-  assert.equal(e,  null)
-})).pipe(db1.writeStream())
+db.readStream().pipe(cursor.each()).pipe(otherdb.writeStream())
 ```
 
 ```js
-db.readStream().pipe(cursor.all(function (e, data) {
-  assert.equal(e,  null)
-  var keys = Object.keys(data)
-  assert(data instanceof Array)
-  assert(keys.length)
-})).pipe(db1.writeStream())
+cursor(db.readStream()).each().pipe(otherdb.writeStream())
+```
+
+```js
+db.readStream().pipe(cursor.all()).pipe(otherdb.writeStream())
+```
+
+```js
+cursor(db.readStream()).all().pipe(otherdb.writeStream())
 ```
 
 ## test [![Build Status](https://travis-ci.org/kordon/cursor.png)](https://travis-ci.org/kordon/cursor)
