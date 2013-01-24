@@ -1,4 +1,4 @@
-# range
+# cursor
 
 [levelup](https://github.com/rvagg/node-levelup) stream cursor
 
