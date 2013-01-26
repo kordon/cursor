@@ -8,7 +8,7 @@
     "url": "git@github.com:kordon/cursor.git"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha test/specs -u qunit -R spec"
+    "test": "make test"
   },
   "keywords": [
     "leveldb",

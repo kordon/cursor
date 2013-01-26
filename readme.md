@@ -217,7 +217,11 @@ db.readStream().pipe(cursor.all()).pipe(otherdb.writeStream())
 cursor(db.readStream()).all().pipe(otherdb.writeStream())
 ```
 
-## test [![Build Status](https://travis-ci.org/kordon/cursor.png)](https://travis-ci.org/kordon/cursor)
+## test 
+
+[![Build Status](https://travis-ci.org/kordon/cursor.png)](https://travis-ci.org/kordon/cursor)
+
+[100% coverage 57 SLOC](http://f.cl.ly/items/2a180M0j1Z1T2q112f3e/coverage.html)
 
 ```bash
 npm test

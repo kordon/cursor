@@ -1,5 +1,7 @@
+if(process.env['CURSOR_COV']) var cursor = require('../../src-cov/cursor')
+else var cursor = require('../../')
+
 var utils = require('../utils'),
-    cursor = require('../../'),
     chai = require('chai')
 
 var assert = chai.assert

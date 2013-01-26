@@ -1,6 +1,8 @@
+if(process.env['CURSOR_COV']) var cursor = require('../../src-cov/cursor')
+else var cursor = require('../../')
+
 var assert = require('chai').assert,
-    utils = require('../utils'),
-    cursor = require('../../')
+    utils = require('../utils')
 
 suite('error param error')
 
