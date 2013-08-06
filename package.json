@@ -8,7 +8,7 @@
     "url": "git@github.com:kordon/cursor.git"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test test-coveralls"
   },
   "keywords": [
     "leveldb",
