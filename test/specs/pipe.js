@@ -43,8 +43,8 @@ test('error param', function (callback) {
 
   second.end = function (e) {
     assert.equal(e,  null)
-    expect(values.length).to.eql(utils.values.length)
-    expect(keys.length).to.eql(utils.keys.length)
+    assert.equal(values.length, utils.values.length)
+    assert.equal(keys.length, utils.keys.length)
     expect(data).to.eql(data1)
     callback()
   }

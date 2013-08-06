@@ -1,5 +1,5 @@
 var assert = require('chai').assert,
-    levelup = require('levelup'),
+    level = require('level'),
     crypto = require('crypto'),
     stream = require('stream'),
     path = require('path')
@@ -15,9 +15,9 @@ var hash = function () {
 
 module.exports.noop = function () {}
 
-// create and return a new levelup instance
+// create and return a new level instance
 module.exports.db = function () {
-  return levelup(path.join(dbs, hash()), {
+  return level(path.join(dbs, hash()), {
     createIfMissing: true,
     errorIfExists: false
   })

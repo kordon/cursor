@@ -1,6 +1,6 @@
 {
   "name": "levelup-cursor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "levelup stream cursor",
   "main": "src/cursor.js",
   "repository": {
@@ -19,11 +19,14 @@
   "license": "MIT",
   "dependencies": {
     "type-component": "0.0.x",
-    "levelup": "0.5.x",
-    "through": "2.1.x"
+    "through": "2.3.x"
   },
   "devDependencies": {
-    "mocha": "1.7.x",
-    "chai": "1.4.x"
+    "mocha-lcov-reporter": "0.0.x",
+    "jscoverage": "0.3.x",
+    "coveralls": "2.1.x",
+    "level": "0.12.x",
+    "mocha": "1.12.x",
+    "chai": "1.7.x"
   }
 }
