@@ -1,4 +1,4 @@
-if(process.env['CURSOR_COV']) var cursor = require('../../src-cov/cursor')
+if(process.env['CURSOR_COV']) var cursor = require('../../lib-cov/cursor')
 else var cursor = require('../../')
 
 var utils = require('../utils'),
