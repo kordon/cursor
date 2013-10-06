@@ -2,10 +2,9 @@ if(process.env['CURSOR_COV']) var cursor = require('../../src-cov/cursor')
 else var cursor = require('../../')
 
 var utils = require('../utils'),
-    chai = require('chai')
+    assert = require('assert'),
+    expect = require('chai').expect
 
-var assert = chai.assert
-var expect = chai.expect
 var db = utils.db()
 
 before(function (callback) {
@@ -27,9 +26,15 @@ test('error param', function (callback) {
     data[key] = value
   }
 
-  first.end = function (e) {
-    assert.equal(e,  null)
-    cursor(db1.readStream()).each(second.each, second.end)
+  first.end = function () {
+    var counts = 0
+    return function (e) {
+      counts += 1
+      if(counts < 2) return
+      
+      assert.equal(e,  null)
+      cursor(db1.readStream()).each(second.each, second.end)
+    }
   }
 
   second.each = function (key, value) {
@@ -48,8 +53,12 @@ test('error param', function (callback) {
     expect(data).to.eql(data1)
     callback()
   }
-
-  cursor(db.readStream()).each(first.each, first.end).pipe(db1.writeStream())
+  
+  var db1ws = db1.writeStream()
+  var dbend = first.end()
+  
+  cursor(db.readStream()).each(first.each, dbend).pipe(db1ws)
+  db1ws.on('close', dbend)
 })
 
 test('error event', function (callback) {
@@ -66,8 +75,14 @@ test('error event', function (callback) {
   }
   
   first.end = function () {
-    db1.readStream().on('error', utils.onerror)
-       .pipe(cursor.each(second.each, second.end))
+    var counts = 0
+    
+    return function () {
+      counts += 1
+      if(counts < 2) return
+      
+      db1.readStream().on('error', utils.onerror).pipe(cursor.each(second.each, second.end))
+    }
   }
   
   second.each = function (key, value) {
@@ -86,9 +101,14 @@ test('error event', function (callback) {
     callback()
   }
   
+  var db1ws = db1.writeStream()
+  var dbend = first.end()
+  
   db.readStream().on('error', utils.onerror)
-    .pipe(cursor.each(first.each, first.end))
-    .pipe(db1.writeStream())
+    .pipe(cursor.each(first.each, dbend))
+    .pipe(db1ws)
+    
+    db1ws.on('close', dbend)
 })
 
 suite('pipe all')
@@ -99,15 +119,21 @@ test('error param', function (callback) {
   var data = {}
   var keys = []
 
-  var first = function (e, _keys, _values, _data) {
-    assert.equal(e,  null)
-    values = _values
-    data = _data
-    keys = _keys
-    
-    setTimeout(function () {
+  var first = function () {
+    var counts = 0
+    return function (e, _keys, _values, _data) {
+      counts += 1
+      
+      if(!(arguments.length < 4)) {
+        assert.equal(e,  null)
+        values = _values
+        data = _data
+        keys = _keys
+      }
+      
+      if(counts < 2) return
       cursor(db1.readStream()).all(second)
-    }, 100)
+    }
   }
   
   var second = function (e, _keys, _values, _data) {
@@ -120,7 +146,11 @@ test('error param', function (callback) {
     callback()
   }
   
-  cursor(db.readStream()).all(first).pipe(db1.writeStream())
+  var db1ws = db1.writeStream()
+  var f = first()
+  
+  cursor(db.readStream()).all(f).pipe(db1ws)
+  db1ws.on('close', f)
 })
 
 test('error event', function (callback) {
@@ -129,18 +159,21 @@ test('error event', function (callback) {
   var data = {}
   var keys = []
 
-  var first = function (_keys, _values, _data) {
-    values = _values
-    data = _data
-    keys = _keys
+  var first = function () {
+    var counts = 0
     
-    setInterval(function () {
+    return function (_keys, _values, _data) {
+      counts += 1
+      
+      if(!(arguments.length < 3)) {
+        values = _values
+        data = _data
+        keys = _keys
+      }
+      
+      if(counts < 2) return
       db1.readStream().on('error', utils.onerror).pipe(cursor.all(second))
-    }, 100)
-  }
-  
-  var error = function (e) {
-    assert.equal(e,  null)
+    }
   }
 
   var second = function (_keys, _values, _data) {
@@ -152,6 +185,11 @@ test('error event', function (callback) {
     callback()
   }
   
+  var db1ws = db1.writeStream()
+  var f = first()
+  
   db.readStream().on('error', utils.onerror)
-    .pipe(cursor.all(first)).pipe(db1.writeStream())
+    .pipe(cursor.all(f)).pipe(db1ws)
+  
+  db1ws.on('close', f)
 })
