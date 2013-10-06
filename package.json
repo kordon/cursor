@@ -1,6 +1,6 @@
 {
   "name": "level-cursor",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "level stream cursor",
   "main": "src/cursor.js",
   "repository": {
