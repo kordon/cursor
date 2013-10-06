@@ -105,7 +105,9 @@ test('error param', function (callback) {
     data = _data
     keys = _keys
     
-    cursor(db1.readStream()).all(second)
+    setTimeout(function () {
+      cursor(db1.readStream()).all(second)
+    }, 100)
   }
   
   var second = function (e, _keys, _values, _data) {
@@ -132,7 +134,9 @@ test('error event', function (callback) {
     data = _data
     keys = _keys
     
-    db1.readStream().on('error', utils.onerror).pipe(cursor.all(second))
+    setInterval(function () {
+      db1.readStream().on('error', utils.onerror).pipe(cursor.all(second))
+    }, 100)
   }
   
   var error = function (e) {
