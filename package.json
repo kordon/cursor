@@ -1,7 +1,7 @@
 {
-  "name": "levelup-cursor",
-  "version": "0.4.0",
-  "description": "levelup stream cursor",
+  "name": "level-cursor",
+  "version": "0.5.0",
+  "description": "level stream cursor",
   "main": "src/cursor.js",
   "repository": {
     "type": "git",
@@ -11,7 +11,9 @@
     "test": "make test test-coveralls"
   },
   "keywords": [
+    "level",
     "leveldb",
+    "levelup",
     "stream",
     "cursor"
   ],
@@ -24,9 +26,9 @@
   "devDependencies": {
     "mocha-lcov-reporter": "0.0.x",
     "jscoverage": "0.3.x",
-    "coveralls": "2.1.x",
-    "level": "0.12.x",
-    "mocha": "1.12.x",
-    "chai": "1.7.x"
+    "coveralls": "2.3.x",
+    "level": "0.17.x",
+    "mocha": "1.13.x",
+    "chai": "1.8.x"
   }
 }

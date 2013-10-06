@@ -2,7 +2,7 @@
 
 [level](https://github.com/level/level) stream cursor
 
-[![NPM version](https://badge.fury.io/js/levelup-cursor.png)](http://badge.fury.io/js/levelup-cursor)
+[![NPM version](https://badge.fury.io/js/level-cursor.png)](http://badge.fury.io/js/level-cursor)
 [![Build Status](https://secure.travis-ci.org/kordon/cursor.png)](http://travis-ci.org/kordon/cursor)
 [![Dependency Status](https://gemnasium.com/kordon/cursor.png)](https://gemnasium.com/kordon/cursor)
 [![Coverage Status](https://coveralls.io/repos/kordon/cursor/badge.png?branch=master)](https://coveralls.io/r/kordon/cursor?branch=master)
@@ -10,13 +10,13 @@
 ## install
 
 ```bash
-npm install [--save/--save-dev] levelup-cursor
+npm install [--save/--save-dev] level-cursor
 ```
 
 ## api
 
 ```js
-var cursor = require('levelup-cursor');
+var cursor = require('level-cursor');
 ```
 
 ### each
