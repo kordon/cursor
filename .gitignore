@@ -3,3 +3,4 @@ node_modules
 src-cov
 test/dbs/**
 !test/dbs/.gitignore
+lib-cov
