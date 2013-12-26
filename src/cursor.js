@@ -13,21 +13,43 @@ var cursor = function (stream) {
 }
 
 cursor.prototype.all = function (end) {
-  this.stream.on('error', end)
+  var called = false
+
+  this.stream.on('error', function () {
+    if (called) return
+    called = true
+
+    end.apply(end, arguments)
+  })
+
   this.stream.pipe(all(function () {
+    if (called) return
+    called = true
+
     Array.prototype.unshift.call(arguments, null)
     end.apply(end, arguments)
   }))
-  
+
   return this.stream
 }
 
 cursor.prototype.each = function (start, end) {
-  this.stream.on('error', end)
+  var called = false
+
+  this.stream.on('error', function () {
+    if (called) return
+    called = true
+
+    end.apply(end, arguments)
+  })
+
   this.stream.pipe(each(start, function () {
+    if (called) return
+    called = true
+
     Array.prototype.unshift.call(arguments, null)
     end.apply(end, arguments)
   }))
-  
+
   return this.stream
 }

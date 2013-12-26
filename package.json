@@ -1,6 +1,6 @@
 {
   "name": "level-cursor",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "level stream cursor",
   "main": "src/cursor.js",
   "repository": {
@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "type-component": "0.0.x",
-    "through": "2.3.x"
+    "through2": "0.2.x"
   },
   "devDependencies": {
     "mocha-lcov-reporter": "0.0.x",
